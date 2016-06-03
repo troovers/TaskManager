@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Taakbeheer</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_login">Login</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_username">Gebruikersnaam</string>
+    <string name="prompt_password">Wachtwoord</string>
+    <string name="action_sign_in">Inloggen</string>
+    <string name="action_sign_in_short">Login</string>
+    <string name="error_invalid_username">De gebruikersnaam is onjuist</string>
+    <string name="error_incorrect_password">Het wachtwoord is onjuist</string>
+    <string name="error_field_required">Dit veld is verplicht</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Shared preferences strings -->
+    <string name="sp_first_login">first_login</string>
+    <string name="sp_remember_login">remember_login</string>
+    <string name="sp_user_id">user_id</string>
+    <string name="sp_api_key">api_key</string>
+    <string name="sp_first_name">first_name</string>
+    <string name="sp_last_name">last_name</string>
+    <string name="sp_date_edited">date_edited</string>
+</resources>

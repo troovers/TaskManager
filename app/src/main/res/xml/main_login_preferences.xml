@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <CheckBoxPreference
+        android:key="@string/sp_first_login"
+        android:defaultValue="true"/>
+
+    <CheckBoxPreference
+        android:key="@string/sp_remember_login"
+        android:defaultValue="false"/>
+
+    <EditTextPreference
+        android:key="@string/sp_user_id"
+        android:defaultValue="0"/>
+
+    <EditTextPreference
+        android:key="@string/sp_api_key"
+        android:defaultValue=""/>
+
+    <EditTextPreference
+        android:key="@string/sp_first_name"
+        android:defaultValue=""/>
+
+    <EditTextPreference
+        android:key="@string/sp_last_name"
+        android:defaultValue=""/>
+
+    <EditTextPreference
+        android:key="@string/sp_date_edited"
+        android:defaultValue=""/>
+
+</PreferenceScreen>
