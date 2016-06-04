@@ -138,7 +138,11 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
 
         @Override
         protected void onPostExecute(ArrayList<Task> tasksArray) {
-            tasks = tasksArray;
+            tasks.clear();
+
+            for(Task t: tasksArray) {
+                tasks.add(t);
+            }
 
             taskAdapter.notifyDataSetChanged();
         }
