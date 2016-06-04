@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        sharedPreferences = getSharedPreferences("main_login_preferences", MODE_PRIVATE);
+        sharedPreferences = getApplicationContext().getSharedPreferences("main_login_preferences", MODE_PRIVATE);
 
         // Set up the login form.
         usernameField = (EditText) findViewById(R.id.username);
@@ -227,15 +227,20 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success) {
-                sharedPreferences.edit().putBoolean(spKeys.getFirstLoginString(), false).apply();
-                sharedPreferences.edit().putBoolean(spKeys.getRememberLoginString(), remember).apply();
-                sharedPreferences.edit().putInt(spKeys.getUserIdString(), userId).apply();
-                sharedPreferences.edit().putString(spKeys.getFirstNameString(), firstName).apply();
-                sharedPreferences.edit().putString(spKeys.getLastNameString(), lastName).apply();
-                sharedPreferences.edit().putString(spKeys.getDateEditedString(), edited).apply();
-                sharedPreferences.edit().putString(spKeys.getApiKeyString(), apiKey).apply();
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                editor.putBoolean(spKeys.getFirstLoginString(), false);
+                editor.putBoolean(spKeys.getRememberLoginString(), remember);
+                editor.putInt(spKeys.getUserIdString(), userId);
+                editor.putString(spKeys.getFirstNameString(), firstName);
+                editor.putString(spKeys.getLastNameString(), lastName);
+                editor.putString(spKeys.getDateEditedString(), edited);
+                editor.putString(spKeys.getApiKeyString(), apiKey);
+
+                editor.apply();
 
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.putExtra("API_KEY", apiKey);
                 startActivity(intent);
 
                 finish();

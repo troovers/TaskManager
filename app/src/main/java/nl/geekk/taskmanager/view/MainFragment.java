@@ -1,70 +1,79 @@
 package nl.geekk.taskmanager.view;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 import nl.geekk.taskmanager.R;
+import nl.geekk.taskmanager.adapter.TaskAdapter;
+import nl.geekk.taskmanager.controller.TaskManager;
+import nl.geekk.taskmanager.model.Task;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MainFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MainFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class MainFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+public class MainFragment extends Fragment implements AdapterView.OnItemClickListener {
+    private Context context;
+    private ListView listView;
+    private ArrayList<Task> tasks = new ArrayList<Task>();
+    private TaskAdapter taskAdapter;
+    private TaskManager taskManager;
+    private SharedPreferences sharedPreferences;
     private OnFragmentInteractionListener mListener;
+
+    private static final String API_KEY = "apiKey";
+    private String apiKey;
 
     public MainFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MainFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MainFragment newInstance(String param1, String param2) {
+    public static MainFragment newInstance(String apiKey) {
         MainFragment fragment = new MainFragment();
+
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(API_KEY, apiKey);
         fragment.setArguments(args);
+
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            apiKey = getArguments().getString(API_KEY);
         }
+
+        taskManager = new TaskManager(apiKey);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        final View view = inflater.inflate(R.layout.fragment_main, container, false);
+
+        listView = (ListView) view.findViewById(R.id.tasks);
+        listView.setOnItemClickListener(this);
+
+        //tasks.add(new Task(2, "Titel", "omschrijving", 1, new Date("2016-03-02 14:33:33"), new Date("2016-03-05")));
+
+        taskAdapter = new TaskAdapter(context, getActivity().getLayoutInflater(), tasks);
+        listView.setAdapter(taskAdapter);
+
+        new InitializeListView().execute();
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -77,11 +86,13 @@ public class MainFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
+        this.context = context;
+
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+            throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -89,6 +100,11 @@ public class MainFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
     }
 
     /**
@@ -104,5 +120,27 @@ public class MainFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private class InitializeListView extends AsyncTask<Void, Void, ArrayList<Task>> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // before making http calls
+        }
+
+        @Override
+        protected ArrayList<Task> doInBackground(Void... args) {
+            ArrayList<Task> tasksArray = taskManager.getTasks();
+
+            return tasksArray;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Task> tasksArray) {
+            tasks = tasksArray;
+
+            taskAdapter.notifyDataSetChanged();
+        }
     }
 }

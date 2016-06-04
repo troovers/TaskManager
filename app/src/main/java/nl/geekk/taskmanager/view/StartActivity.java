@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 import nl.geekk.taskmanager.model.SPKeys;
 import nl.geekk.taskmanager.model.ServiceHandler;
@@ -46,6 +47,7 @@ public class StartActivity extends AppCompatActivity {
 
             startParams.first_login = sharedPreferences.getBoolean(spKeys.getFirstLoginString(), true);
             startParams.remember_login = sharedPreferences.getBoolean(spKeys.getRememberLoginString(), false);
+            startParams.api_key = sharedPreferences.getString(spKeys.getApiKeyString(), "");
             startParams.date_edited = sharedPreferences.getString(spKeys.getDateEditedString(), "");
 
             if(!startParams.first_login && startParams.remember_login) {
@@ -83,6 +85,7 @@ public class StartActivity extends AppCompatActivity {
                 startActivity(intent);
             } else {
                 Intent intent = new Intent(StartActivity.this, MainActivity.class);
+                intent.putExtra("API_KEY", startParams.api_key);
                 startActivity(intent);
             }
 
@@ -95,6 +98,7 @@ public class StartActivity extends AppCompatActivity {
         public boolean first_login, remember_login;
         public String message;
         public String date_edited;
+        public String api_key;
     }
 
     public boolean checkExistence(int userId) {

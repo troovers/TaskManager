@@ -1,6 +1,8 @@
 package nl.geekk.taskmanager.model;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 
@@ -22,8 +24,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import nl.geekk.taskmanager.view.LoginActivity;
+import nl.geekk.taskmanager.view.MainActivity;
+
 public class ServiceHandler {
-    static String response = null;
+    private JSONObject response = null;
 
     public ServiceHandler() {
 
