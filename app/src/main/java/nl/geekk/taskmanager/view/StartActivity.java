@@ -85,7 +85,6 @@ public class StartActivity extends AppCompatActivity {
                 startActivity(intent);
             } else {
                 Intent intent = new Intent(StartActivity.this, MainActivity.class);
-                intent.putExtra("API_KEY", startParams.api_key);
                 startActivity(intent);
             }
 

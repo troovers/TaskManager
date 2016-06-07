@@ -1,5 +1,6 @@
 package nl.geekk.taskmanager.model;
 
+import java.text.DateFormatSymbols;
 import java.util.Date;
 
 /**
@@ -12,6 +13,7 @@ public class Task {
     private int status;
     private Date createdAt;
     private Date deadline;
+    private String[] months = {"JAN", "FEB", "APR", "MEI", "JUN", "JUL", "AUG", "SEP", "OKT", "NOV", "DEC"};
 
     public Task(int taskId, String taskTitle, String taskDescription, int status, Date createdAt, Date deadline) {
         this.taskId = taskId;
@@ -39,10 +41,16 @@ public class Task {
     }
 
     public String getDeadlineDay() {
-        return String.valueOf(deadline.getDay());
+        return (String) android.text.format.DateFormat.format("dd", deadline);
     }
 
     public String getDeadlineMonth() {
-        return String.valueOf(deadline.getMonth());
+        int month = deadline.getMonth();
+
+        return months[month-1];
+    }
+
+    public String getMonthString(int month) {
+        return new DateFormatSymbols().getMonths()[month-1];
     }
 }

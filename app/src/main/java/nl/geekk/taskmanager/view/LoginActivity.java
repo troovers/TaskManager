@@ -240,7 +240,6 @@ public class LoginActivity extends AppCompatActivity {
                 editor.apply();
 
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                intent.putExtra("API_KEY", apiKey);
                 startActivity(intent);
 
                 finish();

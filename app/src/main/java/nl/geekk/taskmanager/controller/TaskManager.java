@@ -33,6 +33,29 @@ public class TaskManager {
         this.serviceHandler = new ServiceHandler();
     }
 
+    public boolean addTask(String title, String description, String deadline) {
+        Log.d("DEADLINE", "date: "+deadline);
+        boolean result = false;
+
+        JSONObject jsonObject = serviceHandler.getJSONByPOST("http://smash.nl/task_manager/v1/tasks", "task="+title+"&description="+description+"&deadline="+deadline, apiKey);
+
+        if (jsonObject != null) {
+            try {
+                result = jsonObject.getBoolean("error");
+
+                if(result) {
+                    Log.e("JSON", "error");
+                }
+            } catch (JSONException e) {
+                Log.e("JSON", e.getMessage());
+            }
+        } else {
+            Log.e("SERVICEHANDLER", "Couldn't get any data from the url");
+        }
+
+        return result;
+    }
+
     public ArrayList<Task> getTasks() {
         ArrayList<Task> tasks = new ArrayList<Task>();
 
@@ -45,8 +68,6 @@ public class TaskManager {
 
                 if(!error) {
                     tasks = getTasksFromArray(tasksArray);
-
-                    Log.d("TASKS", tasksArray.toString());
                 } else {
                     Log.e("JSON", "error");
                 }

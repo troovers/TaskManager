@@ -1,11 +1,14 @@
 package nl.geekk.taskmanager.view;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -17,22 +20,30 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.daimajia.swipe.SwipeLayout;
+
 import java.util.Map;
 
 import nl.geekk.taskmanager.R;
+import nl.geekk.taskmanager.controller.TaskManager;
 import nl.geekk.taskmanager.model.SPKeys;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener {
+    private SharedPreferences sharedPreferences;
     private SPKeys spKeys = new SPKeys(this);
     private String apiKey;
+    public static TaskManager taskManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = getIntent();
-        apiKey = intent.getStringExtra("API_KEY");
+        sharedPreferences = getSharedPreferences("main_login_preferences", MODE_PRIVATE);
+
+        apiKey = sharedPreferences.getString(spKeys.getApiKeyString(), "");
+
+        taskManager = new TaskManager(apiKey);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()
@@ -44,15 +55,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -61,6 +63,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    public static TaskManager getTaskManager() {
+        return taskManager;
     }
 
     @Override
@@ -101,8 +107,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_home) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.root_layout, MainFragment.newInstance(apiKey), "Home").commit();
+        if (id == R.id.nav_tasks) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.root_layout, MainFragment.newInstance(apiKey), "Taken").commit();
+        } else if (id == R.id.nav_notes) {
+            //getSupportFragmentManager().beginTransaction().replace(R.id.root_layout, new PreferencesFragment(), "Instellingen").commit();
         } else if (id == R.id.nav_manage) {
             getSupportFragmentManager().beginTransaction().replace(R.id.root_layout, new PreferencesFragment(), "Instellingen").commit();
         } else if (id == R.id.nav_logout) {
@@ -127,5 +135,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
     }
 }

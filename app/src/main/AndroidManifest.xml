@@ -29,7 +29,16 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.LoginActivity"
-            android:label="@string/title_activity_login"/>
+            android:label="@string/title_activity_login" />
+        <activity
+            android:name=".view.AddTaskActivity"
+            android:label="@string/title_activity_add_task"
+            android:parentActivityName=".view.MainActivity" >
+            <!-- The meta-data element is needed for versions lower than 4.1 -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

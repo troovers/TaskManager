@@ -5,12 +5,16 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -21,9 +25,10 @@ import nl.geekk.taskmanager.adapter.TaskAdapter;
 import nl.geekk.taskmanager.controller.TaskManager;
 import nl.geekk.taskmanager.model.Task;
 
-public class MainFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class MainFragment extends Fragment implements AdapterView.OnItemClickListener, TextWatcher {
     private Context context;
     private ListView listView;
+    private EditText searchTasksField;
     private ArrayList<Task> tasks = new ArrayList<Task>();
     private TaskAdapter taskAdapter;
     private TaskManager taskManager;
@@ -55,7 +60,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
             apiKey = getArguments().getString(API_KEY);
         }
 
-        taskManager = new TaskManager(apiKey);
+        taskManager = MainActivity.getTaskManager();//new TaskManager(apiKey);
     }
 
     @Override
@@ -63,10 +68,14 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_main, container, false);
 
+        ((MainActivity) getActivity()).setActionBarTitle("Taken");
+
+        searchTasksField = (EditText) view.findViewById(R.id.search_tasks);
+        searchTasksField.addTextChangedListener(this);
+
         listView = (ListView) view.findViewById(R.id.tasks);
         listView.setOnItemClickListener(this);
-
-        //tasks.add(new Task(2, "Titel", "omschrijving", 1, new Date("2016-03-02 14:33:33"), new Date("2016-03-05")));
+        listView.destroyDrawingCache();
 
         taskAdapter = new TaskAdapter(context, getActivity().getLayoutInflater(), tasks);
         listView.setAdapter(taskAdapter);
@@ -97,6 +106,13 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
     }
 
     @Override
+    public void onResume()
+    {
+        super.onResume();
+        new InitializeListView().execute();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
@@ -104,6 +120,39 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Task task = (Task) parent.getItemAtPosition(position);
+
+        Snackbar.make(view, "Je klikt op: "+task.getTaskTitle(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence sequence, int start, int before, int count) {
+        int textLength = sequence.length();
+        ArrayList<Task> tempArrayList = new ArrayList<Task>();
+
+        for(Task t: tasks){
+            if (textLength <= t.getTaskTitle().length()) {
+                if (t.getTaskTitle().toLowerCase().contains(sequence.toString().toLowerCase())) {
+                    tempArrayList.add(t);
+                }
+            }
+        }
+
+        if(tempArrayList.isEmpty()) {
+            listView.setEmptyView(getView().findViewById(R.id.no_results));
+        }
+
+        taskAdapter = new TaskAdapter(context, getActivity().getLayoutInflater(), tempArrayList);
+        listView.setAdapter(taskAdapter);
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
 
     }
 

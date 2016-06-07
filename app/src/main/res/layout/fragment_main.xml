@@ -2,12 +2,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nl.geekk.taskmanager.view.MainFragment">
+    tools:context="nl.geekk.taskmanager.view.MainFragment"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
-    <ListView android:id="@+id/tasks"
-        android:layout_height="match_parent"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0.0sp"/>
+        android:layout_height="match_parent">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/search_tasks"
+            android:hint="@string/search_tasks_hint"
+            android:layout_margin="7.5dp"
+            android:nextFocusUp="@id/search_tasks"
+            android:nextFocusLeft="@id/search_tasks"/>
+
+        <ListView android:id="@+id/tasks"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0.0sp"
+            android:layout_below="@id/search_tasks"/>
+
+        <TextView
+            android:id="@+id/no_results"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawablePadding="5dp"
+            android:gravity="center"
+            android:text="@string/listview_no_results"
+            android:textColor="#A4A4A4"
+            android:textStyle="italic"
+            android:textSize="16dp"
+            android:visibility="gone"
+            android:layout_below="@id/search_tasks"/>
+
+    </RelativeLayout>
 
 </FrameLayout>

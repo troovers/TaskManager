@@ -4,4 +4,6 @@
     <color name="colorPrimaryDark">#49ab4c</color>
     <color name="colorAccent">#0091ff</color>
     <color name="splash_background">#F5F5F5</color>
+
+    <color name="deadline_color">#CCCCCC</color>
 </resources>
