@@ -42,4 +42,8 @@ public class SPKeys {
     public String getDateEditedString() {
         return context.getResources().getString(R.string.sp_date_edited);
     }
+
+    public String getMainFragmentString() {
+        return context.getResources().getString(R.string.sp_main_fragment);
+    }
 }

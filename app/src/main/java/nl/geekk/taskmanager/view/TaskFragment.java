@@ -1,7 +1,6 @@
 package nl.geekk.taskmanager.view;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,31 +23,32 @@ import java.util.Date;
 import nl.geekk.taskmanager.R;
 import nl.geekk.taskmanager.adapter.TaskAdapter;
 import nl.geekk.taskmanager.controller.TaskManager;
+import nl.geekk.taskmanager.model.ListViewHeader;
+import nl.geekk.taskmanager.model.ListViewItem;
 import nl.geekk.taskmanager.model.Task;
 
-public class MainFragment extends Fragment implements AdapterView.OnItemClickListener, TextWatcher {
+public class TaskFragment extends Fragment implements AdapterView.OnItemClickListener, TextWatcher {
     private Context context;
     private ListView listView;
     private EditText searchTasksField;
-    private ArrayList<Task> tasks = new ArrayList<Task>();
+    private TextView noResults;
+    private ArrayList<ListViewItem> listViewItems = new ArrayList<ListViewItem>();
     private TaskAdapter taskAdapter;
     private TaskManager taskManager;
-    private SharedPreferences sharedPreferences;
     private OnFragmentInteractionListener mListener;
 
     private static final String API_KEY = "apiKey";
-    private String apiKey;
 
-    public MainFragment() {
+    public TaskFragment() {
         // Required empty public constructor
     }
 
-    public static MainFragment newInstance(String apiKey) {
-        MainFragment fragment = new MainFragment();
+    public static TaskFragment newInstance() {
+        TaskFragment fragment = new TaskFragment();
 
-        Bundle args = new Bundle();
+        /*Bundle args = new Bundle();
         args.putString(API_KEY, apiKey);
-        fragment.setArguments(args);
+        fragment.setArguments(args);*/
 
         return fragment;
     }
@@ -56,17 +57,17 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
+        /*if (getArguments() != null) {
             apiKey = getArguments().getString(API_KEY);
-        }
+        }*/
 
-        taskManager = MainActivity.getTaskManager();//new TaskManager(apiKey);
+        taskManager = ((MainActivity) getActivity()).getTaskManager();//new TaskManager();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_main, container, false);
+        final View view = inflater.inflate(R.layout.fragment_tasks, container, false);
 
         ((MainActivity) getActivity()).setActionBarTitle("Taken");
 
@@ -75,9 +76,10 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
 
         listView = (ListView) view.findViewById(R.id.tasks);
         listView.setOnItemClickListener(this);
-        listView.destroyDrawingCache();
 
-        taskAdapter = new TaskAdapter(context, getActivity().getLayoutInflater(), tasks);
+        noResults = (TextView) view.findViewById(R.id.no_results);
+
+        taskAdapter = new TaskAdapter(context, getActivity().getLayoutInflater(), listViewItems, taskManager);
         listView.setAdapter(taskAdapter);
 
         new InitializeListView().execute();
@@ -109,7 +111,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
     public void onResume()
     {
         super.onResume();
-        new InitializeListView().execute();
+        //new InitializeListView().execute();
     }
 
     @Override
@@ -120,9 +122,13 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Task task = (Task) parent.getItemAtPosition(position);
+        ListViewItem listViewItem = (ListViewItem) parent.getItemAtPosition(position);
 
-        Snackbar.make(view, "Je klikt op: "+task.getTaskTitle(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+        if(listViewItem instanceof Task) {
+            Task task = (Task) listViewItem;
+
+            Snackbar.make(view, "Je klikt op: " + task.getTaskTitle(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+        }
     }
 
     @Override
@@ -133,12 +139,27 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
     @Override
     public void onTextChanged(CharSequence sequence, int start, int before, int count) {
         int textLength = sequence.length();
-        ArrayList<Task> tempArrayList = new ArrayList<Task>();
+        boolean deadlinePassedHeader = false;
+        boolean deadlineFutureHeader = false;
 
-        for(Task t: tasks){
-            if (textLength <= t.getTaskTitle().length()) {
-                if (t.getTaskTitle().toLowerCase().contains(sequence.toString().toLowerCase())) {
-                    tempArrayList.add(t);
+        ArrayList<ListViewItem> tempArrayList = new ArrayList<ListViewItem>();
+
+        for(ListViewItem listViewItem: listViewItems){
+            if(listViewItem instanceof Task) {
+                Task task = (Task) listViewItem;
+
+                if (textLength <= task.getTaskTitle().length() && task.getTaskTitle().toLowerCase().contains(sequence.toString().toLowerCase())) {
+                    if (new Date().after(task.getDeadline()) && !deadlinePassedHeader) {
+                        tempArrayList.add(new ListViewHeader("Verstreken deadlines"));
+
+                        deadlinePassedHeader = true;
+                    } else if(new Date().before(task.getDeadline()) && !deadlineFutureHeader) {
+                        tempArrayList.add(new ListViewHeader("Toekomstige deadlines"));
+
+                        deadlineFutureHeader = true;
+                    }
+
+                    tempArrayList.add(listViewItem);
                 }
             }
         }
@@ -147,7 +168,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
             listView.setEmptyView(getView().findViewById(R.id.no_results));
         }
 
-        taskAdapter = new TaskAdapter(context, getActivity().getLayoutInflater(), tempArrayList);
+        taskAdapter = new TaskAdapter(context, getActivity().getLayoutInflater(), tempArrayList, taskManager);
         listView.setAdapter(taskAdapter);
     }
 
@@ -187,10 +208,29 @@ public class MainFragment extends Fragment implements AdapterView.OnItemClickLis
 
         @Override
         protected void onPostExecute(ArrayList<Task> tasksArray) {
-            tasks.clear();
+            boolean deadlinePassedHeader = false;
+            boolean deadlineFutureHeader = false;
 
-            for(Task t: tasksArray) {
-                tasks.add(t);
+            listViewItems.clear();
+
+            if(tasksArray.isEmpty()) {
+                listView.setEmptyView(noResults);
+            } else {
+                for(Task t: tasksArray) {
+                    if (new Date().after(t.getDeadline()) && !deadlinePassedHeader) {
+                        listViewItems.add(new ListViewHeader("Verstreken deadlines"));
+
+                        deadlinePassedHeader = true;
+                    } else if(new Date().before(t.getDeadline()) && !deadlineFutureHeader) {
+                        listViewItems.add(new ListViewHeader("Toekomstige deadlines"));
+
+                        deadlineFutureHeader = true;
+                    }
+
+                    listViewItems.add(t);
+
+                    Log.d("Added task", t.getTaskTitle());
+                }
             }
 
             taskAdapter.notifyDataSetChanged();

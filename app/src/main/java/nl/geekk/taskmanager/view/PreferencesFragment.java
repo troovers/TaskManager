@@ -18,8 +18,8 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle bundle, String s) {
         mainActivity = (MainActivity) getActivity();
 
-        addPreferencesFromResource(R.xml.main_login_preferences);
+        addPreferencesFromResource(R.xml.user_defined_preferences);
 
-        PreferenceManager.setDefaultValues(getActivity(), R.xml.main_login_preferences, false);
+        PreferenceManager.setDefaultValues(getActivity(), R.xml.user_defined_preferences, false);
     }
 }

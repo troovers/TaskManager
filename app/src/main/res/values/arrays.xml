@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sp_main_fragment_entries">
+        <item>Taken</item>
+        <item>Notities</item>
+    </string-array>
+
+    <string-array name="sp_main_fragment_entryvalues">
+        <item>TaskFragment</item>
+        <item>NotesFragment</item>
+    </string-array>
+</resources>

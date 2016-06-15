@@ -1,12 +1,17 @@
 package nl.geekk.taskmanager.model;
 
+import android.util.Log;
+
 import java.text.DateFormatSymbols;
+import java.util.Calendar;
 import java.util.Date;
+
+import nl.geekk.taskmanager.adapter.TaskAdapter;
 
 /**
  * Created by Thomas on 4-6-2016.
  */
-public class Task {
+public class Task implements ListViewItem {
     private int taskId;
     private String taskTitle;
     private String taskDescription;
@@ -14,6 +19,8 @@ public class Task {
     private Date createdAt;
     private Date deadline;
     private String[] months = {"JAN", "FEB", "APR", "MEI", "JUN", "JUL", "AUG", "SEP", "OKT", "NOV", "DEC"};
+    public final static int LIST_VIEW_ROW = 1;
+    public final static int LIST_VIEW_HEADER = 2;
 
     public Task(int taskId, String taskTitle, String taskDescription, int status, Date createdAt, Date deadline) {
         this.taskId = taskId;
@@ -50,7 +57,22 @@ public class Task {
         return months[month-1];
     }
 
+    public int getWeekNumber() {
+        Calendar now = Calendar.getInstance();
+
+        now.set(Calendar.YEAR, deadline.getYear());
+        now.set(Calendar.MONTH, deadline.getMonth());
+        now.set(Calendar.DATE, deadline.getDay());
+
+        return now.get(Calendar.WEEK_OF_YEAR);
+    }
+
     public String getMonthString(int month) {
         return new DateFormatSymbols().getMonths()[month-1];
+    }
+
+    @Override
+    public int getViewType() {
+        return LIST_VIEW_ROW;
     }
 }

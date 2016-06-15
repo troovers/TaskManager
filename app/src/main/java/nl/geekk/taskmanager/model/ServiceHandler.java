@@ -125,4 +125,96 @@ public class ServiceHandler {
             return null;
         }
     }
+
+    public JSONObject getJSONByDELETE(String hostName, String params, String apiKey) {
+        try {
+            HttpURLConnection connection = null;
+
+            URL link = new URL(hostName+params);
+
+            connection = (HttpURLConnection) link.openConnection();
+
+            connection.setRequestProperty("Authorization", apiKey);
+            connection.setRequestMethod("DELETE");
+            connection.connect();
+
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            String jsonString = new String();
+
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line+"\n");
+            }
+
+            bufferedReader.close();
+
+            jsonString = stringBuilder.toString();
+
+            return new JSONObject(jsonString);
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+            return null;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public JSONObject getJSONByPUT(String hostName, String params, String apiKey) {
+        try {
+            byte[] postData = params.getBytes(StandardCharsets.UTF_8);
+
+            URL url = new URL(hostName);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setDoOutput( true );
+            connection.setInstanceFollowRedirects( false );
+            connection.setRequestMethod("PUT");
+            connection.setRequestProperty("Authorization", apiKey);
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("charset", "utf-8");
+            connection.setRequestProperty("Content-Length", Integer.toString(postData.length));
+            connection.setUseCaches(false);
+
+            try(DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream())) {
+                dataOutputStream.write( postData );
+            }
+
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            String jsonString = new String();
+
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line+"\n");
+            }
+
+            bufferedReader.close();
+
+            jsonString = stringBuilder.toString();
+
+            Log.d("JSON", jsonString);
+
+            return new JSONObject(jsonString);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

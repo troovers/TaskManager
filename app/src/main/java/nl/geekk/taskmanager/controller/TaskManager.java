@@ -1,8 +1,10 @@
 package nl.geekk.taskmanager.controller;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCantOpenDatabaseException;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -14,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import nl.geekk.taskmanager.model.SPKeys;
 import nl.geekk.taskmanager.model.ServiceHandler;
 import nl.geekk.taskmanager.model.Task;
 
@@ -22,15 +25,20 @@ import nl.geekk.taskmanager.model.Task;
  */
 public class TaskManager {
     private String apiKey;
+    private SPKeys spKeys;
     private ServiceHandler serviceHandler;
     private static final String DATE_TIME_FORMAT = "yyyy-MM-dd kk:mm:ss";
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private SimpleDateFormat datetimeFormat = new SimpleDateFormat(DATE_TIME_FORMAT) ;
     private SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT) ;
+    private SharedPreferences mainAccountPreferences;
 
-    public TaskManager(String apiKey) {
-        this.apiKey = apiKey;
+    public TaskManager(Context context) {
         this.serviceHandler = new ServiceHandler();
+        this.spKeys = new SPKeys(context);
+
+        mainAccountPreferences = context.getSharedPreferences("main_login_preferences", 0);
+        apiKey = mainAccountPreferences.getString(spKeys.getApiKeyString(), "");
     }
 
     public boolean addTask(String title, String description, String deadline) {
@@ -41,10 +49,12 @@ public class TaskManager {
 
         if (jsonObject != null) {
             try {
-                result = jsonObject.getBoolean("error");
+                boolean error = jsonObject.getBoolean("error");
 
-                if(result) {
+                if(error) {
                     Log.e("JSON", "error");
+                } else {
+                    result = true;
                 }
             } catch (JSONException e) {
                 Log.e("JSON", e.getMessage());
@@ -79,6 +89,54 @@ public class TaskManager {
         }
 
         return tasks;
+    }
+
+    public boolean deleteTask(int taskId) {
+        boolean result = false;
+
+        JSONObject jsonObject = serviceHandler.getJSONByDELETE("http://smash.nl/task_manager/v1/tasks/"+taskId, "", apiKey);
+
+        if (jsonObject != null) {
+            try {
+                boolean error = jsonObject.getBoolean("error");
+
+                if(error) {
+                    Log.e("JSON", "error");
+                } else {
+                    result = true;
+                }
+            } catch (JSONException e) {
+                Log.e("JSON", e.getMessage());
+            }
+        } else {
+            Log.e("SERVICEHANDLER", "Couldn't get any data from the url");
+        }
+
+        return result;
+    }
+
+    public boolean completeTask(Task task) {
+        boolean result = false;
+
+        JSONObject jsonObject = serviceHandler.getJSONByPUT("http://smash.nl/task_manager/v1/tasks/"+task.getTaskId(), "task="+task.getTaskTitle()+"&status=2", apiKey);
+
+        if (jsonObject != null) {
+            try {
+                boolean error = jsonObject.getBoolean("error");
+
+                if(error) {
+                    Log.e("JSON", "error");
+                } else {
+                    result = true;
+                }
+            } catch (JSONException e) {
+                Log.e("JSON", e.getMessage());
+            }
+        } else {
+            Log.e("SERVICEHANDLER", "Couldn't get any data from the url");
+        }
+
+        return result;
     }
 
     public ArrayList<Task> getTasksFromArray(JSONArray tasksArray) {

@@ -21,6 +21,8 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <!--<include layout="@layout/content_main" />-->
+
     <fragment
         class="nl.geekk.taskmanager.view.TaskFragment"
         android:layout_height="match_parent"
@@ -32,5 +34,25 @@
         android:paddingRight="0dp"
         android:paddingLeft="0dp"
         android:paddingBottom="0dp"/>
+
+    <fragment
+        class="nl.geekk.taskmanager.view.NotesFragment"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/root_layout_right"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:paddingTop="0dp"
+        android:paddingRight="0dp"
+        android:paddingLeft="0dp"
+        android:paddingBottom="0dp"/>
+
+    <!--<android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_add_white_24px" />-->
 
 </android.support.design.widget.CoordinatorLayout>

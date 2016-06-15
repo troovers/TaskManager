@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="0dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="nl.geekk.taskmanager.view.MainActivity"
+    tools:showIn="@layout/app_bar_main"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <PreferenceCategory
+        android:title="@string/sp_startscreen_category">
+
+        <ListPreference
+            android:key="@string/sp_main_fragment"
+            android:title="@string/sp_main_fragment_title"
+            android:summary="@string/sp_main_fragment_summary"
+            android:entries="@array/sp_main_fragment_entries"
+            android:entryValues="@array/sp_main_fragment_entryvalues"
+            android:dialogTitle="@string/sp_main_fragment_title"
+            android:defaultValue="TaskFragment"/>
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

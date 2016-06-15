@@ -32,6 +32,11 @@
     <string name="sp_last_name">last_name</string>
     <string name="sp_date_edited">date_edited</string>
 
+    <string name="sp_startscreen_category">App uiterlijk</string>
+    <string name="sp_main_fragment">main_fragment</string>
+    <string name="sp_main_fragment_title">Startscherm</string>
+    <string name="sp_main_fragment_summary">Pas uw startscherm aan</string>
+
 
     <!-- Main fragment -->
     <string name="search_tasks_hint">Zoeken</string>

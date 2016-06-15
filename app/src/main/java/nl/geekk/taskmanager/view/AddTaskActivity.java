@@ -38,13 +38,13 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_task);
 
-        taskManager = MainActivity.getTaskManager();
-
         taskTitle = (EditText) findViewById(R.id.new_task_title);
         taskDescription = (EditText) findViewById(R.id.new_task_description);
         taskDeadline = (TextView) findViewById(R.id.deadline);
         pickDeadline = (ImageButton) findViewById(R.id.pick_deadline);
         addTask = (Button) findViewById(R.id.add_task_button);
+
+        taskManager = new TaskManager(this);
 
         /** Listener for click event of the button */
         pickDeadline.setOnClickListener(new View.OnClickListener() {
