@@ -1,31 +1,21 @@
 package nl.geekk.taskmanager.model;
 
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-
-import nl.geekk.taskmanager.view.LoginActivity;
-import nl.geekk.taskmanager.view.MainActivity;
 
 public class ServiceHandler {
     private JSONObject response = null;
@@ -71,8 +61,6 @@ public class ServiceHandler {
 
             jsonString = stringBuilder.toString();
 
-            Log.d("JSON", jsonString);
-
             return new JSONObject(jsonString);
         } catch (IOException e) {
             e.printStackTrace();
@@ -87,7 +75,7 @@ public class ServiceHandler {
         try {
             HttpURLConnection connection = null;
 
-            URL link = new URL(hostName+params);
+            URL link = new URL(hostName + params);
 
             connection = (HttpURLConnection) link.openConnection();
 
@@ -103,7 +91,7 @@ public class ServiceHandler {
             String line;
 
             while ((line = bufferedReader.readLine()) != null) {
-                stringBuilder.append(line+"\n");
+                stringBuilder.append(line + "\n");
             }
 
             bufferedReader.close();
@@ -111,6 +99,9 @@ public class ServiceHandler {
             jsonString = stringBuilder.toString();
 
             return new JSONObject(jsonString);
+        } catch(ConnectException e) {
+            e.printStackTrace();
+            return generateErrorObjectJSON("Er kon geen verbinding gemaakt worden");
         } catch (ProtocolException e) {
             e.printStackTrace();
             return null;
@@ -206,8 +197,6 @@ public class ServiceHandler {
 
             jsonString = stringBuilder.toString();
 
-            Log.d("JSON", jsonString);
-
             return new JSONObject(jsonString);
         } catch (IOException e) {
             e.printStackTrace();
@@ -216,5 +205,19 @@ public class ServiceHandler {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public JSONObject generateErrorObjectJSON(String message) {
+        String json = "{\"error\": true, \"string\": \""+message+"\"}";
+
+        JSONObject object = null;
+
+        try {
+            object = new JSONObject(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return object;
     }
 }

@@ -18,9 +18,10 @@ public class Task implements ListViewItem {
     private int status;
     private Date createdAt;
     private Date deadline;
+    private int identifier;
     private String[] months = {"JAN", "FEB", "APR", "MEI", "JUN", "JUL", "AUG", "SEP", "OKT", "NOV", "DEC"};
-    public final static int LIST_VIEW_ROW = 1;
-    public final static int LIST_VIEW_HEADER = 2;
+
+    public final static int TASK = 0;
 
     public Task(int taskId, String taskTitle, String taskDescription, int status, Date createdAt, Date deadline) {
         this.taskId = taskId;
@@ -29,6 +30,7 @@ public class Task implements ListViewItem {
         this.status = status;
         this.createdAt = createdAt;
         this.deadline = deadline;
+        this.identifier = TASK;
     }
 
     public int getTaskId() {
@@ -72,7 +74,7 @@ public class Task implements ListViewItem {
     }
 
     @Override
-    public int getViewType() {
-        return LIST_VIEW_ROW;
+    public int getIdentifier() {
+        return identifier;
     }
 }

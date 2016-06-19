@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -54,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements TaskFragment.OnFr
     }
 
     public TaskManager getTaskManager() {
-        if(taskManager == null) {
+        if (taskManager == null) {
             return new TaskManager(this);
         } else {
             return taskManager;
@@ -86,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements TaskFragment.OnFr
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if(id == R.id.add_task_button) {
+        if (id == R.id.add_task_button) {
             Intent intent = new Intent(this, AddTaskActivity.class);
             startActivity(intent);
         }
@@ -101,11 +100,11 @@ public class MainActivity extends AppCompatActivity implements TaskFragment.OnFr
         int id = item.getItemId();
 
         if (id == R.id.nav_tasks) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.root_layout, TaskFragment.newInstance(), "Taken").commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.root_layout, TaskFragment.newInstance(), "Taken").addToBackStack(null).commit();
         } else if (id == R.id.nav_notes) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.root_layout, NotesFragment.newInstance(), "Notities").commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.root_layout, NotesFragment.newInstance(), "Notities").addToBackStack(null).commit();
         } else if (id == R.id.nav_manage) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.root_layout, new PreferencesFragment(), "Instellingen").commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.root_layout, PreferencesFragment.newInstance(), "Instellingen").addToBackStack(null).commit();
         } else if (id == R.id.nav_logout) {
             SharedPreferences sharedPreferences = getSharedPreferences("main_login_preferences", MODE_PRIVATE);
 
@@ -132,5 +131,15 @@ public class MainActivity extends AppCompatActivity implements TaskFragment.OnFr
 
     public void setActionBarTitle(String title) {
         //getSupportActionBar().setTitle(title);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 }

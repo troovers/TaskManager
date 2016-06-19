@@ -7,5 +7,5 @@ import android.view.View;
  * Created by Thomas on 14-6-2016.
  */
 public interface ListViewItem {
-    int getViewType();
+    int getIdentifier();
 }

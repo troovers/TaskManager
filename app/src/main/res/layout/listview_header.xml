@@ -5,16 +5,29 @@
     android:layout_height="match_parent"
     android:id="@+id/swipe_listview_row">
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/listview_header"
-        android:text="Header"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:textColor="@color/colorPrimaryDark"
-        android:textStyle="bold|italic"/>
+        android:paddingTop="20dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="5dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/listview_header_icon"
+            android:layout_marginRight="15dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/listview_header"
+            android:text="Header"
+            android:layout_toRightOf="@id/listview_header_icon"
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="bold|italic"/>
+
+    </RelativeLayout>
 
 </com.daimajia.swipe.SwipeLayout>

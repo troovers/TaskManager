@@ -12,7 +12,8 @@
     tools:context="nl.geekk.taskmanager.view.MainActivity"
     tools:showIn="@layout/app_bar_main"
     android:focusable="true"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    android:background="#EEEEEE">
 
     <PreferenceCategory
         android:title="@string/sp_startscreen_category">

@@ -1,5 +1,6 @@
 package nl.geekk.taskmanager.view;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -150,11 +151,11 @@ public class TaskFragment extends Fragment implements AdapterView.OnItemClickLis
 
                 if (textLength <= task.getTaskTitle().length() && task.getTaskTitle().toLowerCase().contains(sequence.toString().toLowerCase())) {
                     if (new Date().after(task.getDeadline()) && !deadlinePassedHeader) {
-                        tempArrayList.add(new ListViewHeader("Verstreken deadlines"));
+                        tempArrayList.add(new ListViewHeader("Verstreken deadlines", ListViewHeader.PASSED_DEADLINE_HEADER));
 
                         deadlinePassedHeader = true;
                     } else if(new Date().before(task.getDeadline()) && !deadlineFutureHeader) {
-                        tempArrayList.add(new ListViewHeader("Toekomstige deadlines"));
+                        tempArrayList.add(new ListViewHeader("Toekomstige deadlines", ListViewHeader.FUTURE_DEADLINE_HEADER));
 
                         deadlineFutureHeader = true;
                     }
@@ -193,10 +194,18 @@ public class TaskFragment extends Fragment implements AdapterView.OnItemClickLis
     }
 
     private class InitializeListView extends AsyncTask<Void, Void, ArrayList<Task>> {
+        private ProgressDialog dialog;
+
+        public InitializeListView() {
+            dialog = new ProgressDialog(context);
+        }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            // before making http calls
+
+            this.dialog.setMessage("Taken ophalen..");
+            this.dialog.show();
         }
 
         @Override
@@ -213,16 +222,20 @@ public class TaskFragment extends Fragment implements AdapterView.OnItemClickLis
 
             listViewItems.clear();
 
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+
             if(tasksArray.isEmpty()) {
                 listView.setEmptyView(noResults);
             } else {
                 for(Task t: tasksArray) {
                     if (new Date().after(t.getDeadline()) && !deadlinePassedHeader) {
-                        listViewItems.add(new ListViewHeader("Verstreken deadlines"));
+                        listViewItems.add(new ListViewHeader("Verstreken deadlines", ListViewHeader.PASSED_DEADLINE_HEADER));
 
                         deadlinePassedHeader = true;
                     } else if(new Date().before(t.getDeadline()) && !deadlineFutureHeader) {
-                        listViewItems.add(new ListViewHeader("Toekomstige deadlines"));
+                        listViewItems.add(new ListViewHeader("Toekomstige deadlines", ListViewHeader.FUTURE_DEADLINE_HEADER));
 
                         deadlineFutureHeader = true;
                     }

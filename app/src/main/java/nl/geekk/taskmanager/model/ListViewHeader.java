@@ -7,11 +7,13 @@ import nl.geekk.taskmanager.adapter.TaskAdapter;
  */
 public class ListViewHeader implements ListViewItem {
     private String headerTitle;
-    public final static int LIST_VIEW_ROW = 1;
-    public final static int LIST_VIEW_HEADER = 2;
+    private int identifier;
+    public final static int PASSED_DEADLINE_HEADER = 0;
+    public final static int FUTURE_DEADLINE_HEADER = 1;
 
-    public ListViewHeader(String headerTitle) {
+    public ListViewHeader(String headerTitle, int identifier) {
         this.headerTitle = headerTitle;
+        this.identifier = identifier;
     }
 
     public String getHeaderTitle() {
@@ -19,7 +21,7 @@ public class ListViewHeader implements ListViewItem {
     }
 
     @Override
-    public int getViewType() {
-        return LIST_VIEW_HEADER;
+    public int getIdentifier() {
+        return identifier;
     }
 }

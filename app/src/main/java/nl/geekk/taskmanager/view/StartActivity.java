@@ -3,8 +3,8 @@ package nl.geekk.taskmanager.view;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -13,10 +13,10 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 
 import nl.geekk.taskmanager.model.SPKeys;
 import nl.geekk.taskmanager.model.ServiceHandler;
+import nl.geekk.taskmanager.notifications.NotificationEventReceiver;
 
 public class StartActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
@@ -31,6 +31,8 @@ public class StartActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("main_login_preferences", MODE_PRIVATE);
 
         new PrefetchData().execute();
+
+        NotificationEventReceiver.setupAlarm(getApplicationContext());
     }
 
     private class PrefetchData extends AsyncTask<Void, Void, StartParams> {
@@ -103,7 +105,7 @@ public class StartActivity extends AppCompatActivity {
     public boolean checkExistence(int userId) {
         ServiceHandler serviceHandler = new ServiceHandler();
 
-        JSONObject jsonObj = serviceHandler.getJSONByGET("http://smash.nl/task_manager/v1/accountExists/", ""+userId, "");
+        JSONObject jsonObj = serviceHandler.getJSONByGET("http://smash.nl/task_manager/v1/accountExists/"+userId, "", "");
 
         if (jsonObj != null) {
             try {
@@ -132,7 +134,7 @@ public class StartActivity extends AppCompatActivity {
         ServiceHandler serviceHandler = new ServiceHandler();
 
         // Making a request to url and getting response
-        JSONObject jsonObj = serviceHandler.getJSONByGET("http://smash.nl/task_manager/v1/accountChanged/", ""+userId, "");
+        JSONObject jsonObj = serviceHandler.getJSONByGET("http://smash.nl/task_manager/v1/accountChanged/"+userId, "", "");
 
         if (jsonObj != null) {
             try {

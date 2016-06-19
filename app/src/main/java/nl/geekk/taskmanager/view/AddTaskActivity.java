@@ -46,13 +46,10 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
 
         taskManager = new TaskManager(this);
 
-        /** Listener for click event of the button */
-        pickDeadline.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                showDialog(DATE_DIALOG_ID);
-            }
-        });
-
+        /** Listener for click event of the buttons */
+        taskDeadline.setClickable(true);
+        taskDeadline.setOnClickListener(this);
+        pickDeadline.setOnClickListener(this);
         addTask.setOnClickListener(this);
 
         /** Get the current date */
@@ -82,7 +79,7 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
     };
 
     private void updateDisplay() {
-        taskDeadline.setText(new StringBuilder().append(day).append("/").append(month+1).append("/").append(year));
+        taskDeadline.setText(new StringBuilder().append(day).append("/").append(month + 1).append("/").append(year));
     }
 
     @Override
@@ -100,18 +97,29 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        String title = taskTitle.getText().toString();
-        String description = taskDescription.getText().toString();
-        String[] deadline = taskDeadline.getText().toString().split("/");
+        switch(v.getId()) {
+            case R.id.add_task_button:
+                String title = taskTitle.getText().toString();
+                String description = taskDescription.getText().toString();
+                String[] deadline = taskDeadline.getText().toString().split("/");
 
-        String year = deadline[2];
-        String month = String.format("%02d", Integer.valueOf(deadline[1]));
-        String day = String.format("%02d", Integer.valueOf(deadline[0]));
+                String year = deadline[2];
+                String month = String.format("%02d", Integer.valueOf(deadline[1]));
+                String day = String.format("%02d", Integer.valueOf(deadline[0]));
 
-        if(!title.equals("") && !description.equals("") && !deadline.equals("")) {
-            new AddTask(title, description, year+"-"+month+"-"+day).execute();
-        } else {
-            Snackbar.make(v, "Niet alle velden zijn gevuld", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                if (!title.equals("") && !description.equals("") && !deadline.equals("")) {
+                    new AddTask(title, description, year + "-" + month + "-" + day).execute();
+                } else {
+                    Snackbar.make(v, "Niet alle velden zijn gevuld", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+
+                break;
+            case R.id.deadline:
+                showDialog(DATE_DIALOG_ID);
+                break;
+            case R.id.pick_deadline:
+                showDialog(DATE_DIALOG_ID);
+                break;
         }
     }
 
