@@ -1,4 +1,4 @@
-package nl.geekk.taskmanager.notifications;
+package nl.geekk.taskmanager.receivers;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -10,13 +10,15 @@ import android.util.Log;
 import java.util.Calendar;
 import java.util.Date;
 
+import nl.geekk.taskmanager.services.NotificationIntentService;
+
 /**
  * Created by Thomas on 19-6-2016.
  */
 public class NotificationEventReceiver extends WakefulBroadcastReceiver {
     private static final String ACTION_START_NOTIFICATION_SERVICE = "ACTION_START_NOTIFICATION_SERVICE";
     private static final String ACTION_DELETE_NOTIFICATION = "ACTION_DELETE_NOTIFICATION";
-    private static final int NOTIFICATIONS_INTERVAL_IN_HOURS = 2;
+    private static final int NOTIFICATIONS_INTERVAL_IN_HOURS = 24;
 
     public static void setupAlarm(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);

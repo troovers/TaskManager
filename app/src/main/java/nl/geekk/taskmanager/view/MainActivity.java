@@ -2,9 +2,11 @@ package nl.geekk.taskmanager.view;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,21 +14,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import nl.geekk.taskmanager.R;
 import nl.geekk.taskmanager.controller.TaskManager;
+import nl.geekk.taskmanager.model.MyApplication;
 import nl.geekk.taskmanager.model.SPKeys;
+import nl.geekk.taskmanager.receivers.ConnectionReceiver;
 
-public class MainActivity extends AppCompatActivity implements TaskFragment.OnFragmentInteractionListener, NotesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements TaskFragment.OnFragmentInteractionListener, NotesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, ConnectionReceiver.ConnectivityReceiverListener {
     private SharedPreferences mainAccountPreferences, userDefinedPreferences;
     private SPKeys spKeys = new SPKeys(this);
     private String apiKey;
     private TaskManager taskManager;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         mainAccountPreferences = getSharedPreferences("main_login_preferences", MODE_PRIVATE);
         userDefinedPreferences = getSharedPreferences("user_defined_preferences", MODE_PRIVATE);
@@ -133,6 +142,32 @@ public class MainActivity extends AppCompatActivity implements TaskFragment.OnFr
         //getSupportActionBar().setTitle(title);
     }
 
+    private boolean checkConnection() {
+        boolean isConnected = ConnectionReceiver.isConnected();
+
+        showConnectivityError();
+
+        return isConnected;
+    }
+
+    // Showing the status in Snackbar
+    private void showConnectivityError() {
+        Snackbar snackbar = Snackbar.make(drawerLayout, "Geen internetverbinding", Snackbar.LENGTH_LONG).setAction("RETRY", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        snackbar.setActionTextColor(Color.RED);
+
+        View sbView = snackbar.getView();
+        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(Color.WHITE);
+
+        snackbar.show();
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -141,5 +176,19 @@ public class MainActivity extends AppCompatActivity implements TaskFragment.OnFr
     @Override
     public void onStop() {
         super.onStop();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        MyApplication.getInstance().setConnectivityListener(this);
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        if(!isConnected) {
+            showConnectivityError();
+        }
     }
 }

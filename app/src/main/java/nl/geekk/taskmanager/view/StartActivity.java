@@ -16,7 +16,6 @@ import java.util.Date;
 
 import nl.geekk.taskmanager.model.SPKeys;
 import nl.geekk.taskmanager.model.ServiceHandler;
-import nl.geekk.taskmanager.notifications.NotificationEventReceiver;
 
 public class StartActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
@@ -32,7 +31,8 @@ public class StartActivity extends AppCompatActivity {
 
         new PrefetchData().execute();
 
-        NotificationEventReceiver.setupAlarm(getApplicationContext());
+        // Push notification on app start
+        //NotificationEventReceiver.setupAlarm(getApplicationContext());
     }
 
     private class PrefetchData extends AsyncTask<Void, Void, StartParams> {

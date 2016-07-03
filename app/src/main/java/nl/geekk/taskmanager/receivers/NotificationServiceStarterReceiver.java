@@ -1,4 +1,4 @@
-package nl.geekk.taskmanager.notifications;
+package nl.geekk.taskmanager.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
